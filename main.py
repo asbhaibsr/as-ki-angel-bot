@@ -513,17 +513,37 @@ async def send_ad_to_non_premium(client: Client, message: Message):
         ads = [
             f"अरे यार, यहाँ क्यों बोर हो रहे हो? हमारी मूवी वाली गैंग **[@istreamx]({ISTREAMX_LINK})** में आओ ना! वहाँ तो धूम मची है! 🍿🎬",
             f"क्या! तुम्हें पता नहीं? सारे लेटेस्ट अपडेट्स तो हमारे **[@asbhai_bsr]({MANDATORY_CHANNEL_LINK})** चैनल पर मिलते हैं! जल्दी से जॉइन कर लो! 🏃‍♀️💨",
-            f"प्रीमियम ऐप्स चाहिए? फिकर नॉट! सीधे **[@aspremiumapps]({ASPREMIUMAPPS_LINK})** पर आओ ना! सब मिलेगा वहाँ! 😉",
+            f"प्रीमium ऐप्स चाहिए? फिकर नॉट! सीधे **[@aspremiumapps]({ASPREMIUMAPPS_LINK})** पर आओ ना! सब मिलेगा वहाँ! 😉",
             f"अपनी As ki Angel को और भी स्मार्ट और बिना एड्स के चाहते हो? **💎 प्रीमियम लो ना!** `/start` करके देखो! 😉"
         ]
         await message.reply_text(random.choice(ads), parse_mode="Markdown")
 
+# --- Keep-Alive Function ---
+async def keep_alive():
+    """Sends a periodic message to the bot owner to keep the bot active."""
+    # Ensure BOT_OWNER_ID is correctly set for this to work
+    if str(BOT_OWNER_ID) == 'YOUR_OWNER_ID_HERE':
+        print("Keep-alive: BOT_OWNER_ID not set, cannot send messages.")
+        return
+
+    while True:
+        try:
+            # You can change this message or send it to a private log channel
+            await app.send_message(BOT_OWNER_ID, "As ki Angel is awake! (Keep-alive ping from Koyeb)")
+            print("Keep-alive: Sent message to owner.")
+        except Exception as e:
+            print(f"Keep-alive failed to send message: {e}")
+        await asyncio.sleep(60 * 5) # हर 5 मिनट में मैसेज भेजो
 
 # --- Start the bot ---
 async def main():
     print("As ki Angel bot (Pyrogram) is starting...")
     await app.start()
     print("As ki Angel bot is online!")
+    
+    # Start the keep-alive task in the background
+    asyncio.create_task(keep_alive())
+    
     # Keep the bot running indefinitely
     await asyncio.Event().wait() 
 
