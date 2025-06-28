@@ -16,7 +16,7 @@ ISTREAMX_LINK = os.getenv('ISTREAMX_LINK', 'https://t.me/istreamx')
 ASPREMIUMAPPS_LINK = os.getenv('ASPREMIUMAPPS_LINK', 'https://t.me/aspremiumapps')
 
 # --- Bot Owner Configuration ---
-BOT_OWNER_ID = int(os.getenv('BOT_OWNER_ID', '6045817909'))  # Set your actual user ID here
+BOT_OWNER_ID = int(os.getenv('BOT_OWNER_ID', '7315805581'))  # Set your actual user ID here
 
 # --- Learning Configuration ---
 MAX_LEARNING_MEMORY = 1000
