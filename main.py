@@ -12,6 +12,9 @@ from utils import BotUtils
 # --- Import Handlers ---
 from handlers import admin, learning, premium, start
 
+# --- environment variables (नया) ---
+STRING_SESSION = os.getenv('STRING_SESSION') # <-- यह लाइन जोड़ी गई है
+
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
@@ -22,10 +25,10 @@ logging.getLogger("pyrogram").setLevel(logging.WARNING)
 class AskiAngelBot(Client):
     def __init__(self):
         super().__init__(
-            "aski_angel_bot", # Session name
+            STRING_SESSION if STRING_SESSION else "aski_angel_bot", # <-- बदला गया
             api_id=API_ID,
             api_hash=API_HASH,
-            bot_token=BOT_TOKEN,
+            bot_token=BOT_TOKEN if not STRING_SESSION else None, # <-- बदला गया
             parse_mode=ParseMode.MARKDOWN # Default parse mode
         )
         self.db = db
@@ -38,7 +41,7 @@ class AskiAngelBot(Client):
         self.is_connected = True
         self.me = await self.get_me() # Get bot's own info
         print(f"Bot @{self.me.username} started!")
-        
+
         # Register handlers
         self.register_handlers()
 
@@ -65,16 +68,16 @@ class AskiAngelBot(Client):
 
 if __name__ == "__main__":
     # Start the Flask keep-alive server in a separate thread
-    keep_alive()
-    
+    keep_alive() # <-- यह अब non-blocking है क्योंकि keep_alive.py में बदलाव किए गए हैं
+
     # Initialize and run the bot
     bot = AskiAngelBot()
-    
+
     try:
         # Use run_until_complete for synchronous execution of async main
         asyncio.get_event_loop().run_until_complete(bot.start())
         # This will keep the bot running until it's stopped manually or by an error
-        asyncio.get_event_loop().run_forever() 
+        asyncio.get_event_loop().run_forever()
     except KeyboardInterrupt:
         print("Bot stopped by KeyboardInterrupt.")
     except Exception as e:
