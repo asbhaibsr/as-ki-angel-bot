@@ -1,4 +1,4 @@
-pyrogram[fast]
-tgcrypto
-pymongo
-requests
+pyrogram==2.0.106
+pymongo==4.8.0
+flask==3.0.3
+requests==2.32.3
