@@ -12,8 +12,8 @@ from utils import BotUtils
 # --- Import Handlers ---
 from handlers import admin, learning, premium, start
 
-# --- environment variables (नया) ---
-STRING_SESSION = os.getenv('STRING_SESSION') # <-- यह लाइन जोड़ी गई है
+# --- environment variables ---
+STRING_SESSION = os.getenv('STRING_SESSION') # यह लाइन पहले से ही सही है
 
 # Configure logging
 logging.basicConfig(
@@ -24,28 +24,27 @@ logging.getLogger("pyrogram").setLevel(logging.WARNING)
 
 class AskiAngelBot(Client):
     def __init__(self):
+        # यहाँ बदलाव है
         super().__init__(
-            STRING_SESSION if STRING_SESSION else "aski_angel_bot", # <-- बदला गया
+            "AskiAngelBotSession",  # <-- यहाँ एक छोटा, स्थिर सेशन नाम दें
             api_id=API_ID,
             api_hash=API_HASH,
-            bot_token=BOT_TOKEN if not STRING_SESSION else None, # <-- बदला गया
-            parse_mode=ParseMode.MARKDOWN # Default parse mode
+            bot_token=BOT_TOKEN if not STRING_SESSION else None,
+            parse_mode=ParseMode.MARKDOWN,
+            session_string=STRING_SESSION # <-- STRING_SESSION को यहाँ पास करें
         )
         self.db = db
-        self.utils = BotUtils(self) # Pass self (the Pyrogram client) to utils
-        self.is_connected = False # To track connection status
+        self.utils = BotUtils(self)
+        self.is_connected = False
         print("Bot initialized. Connecting to Telegram...")
 
     async def start(self):
         await super().start()
         self.is_connected = True
-        self.me = await self.get_me() # Get bot's own info
+        self.me = await self.get_me()
         print(f"Bot @{self.me.username} started!")
 
-        # Register handlers
         self.register_handlers()
-
-        # Start keep-alive ping in background
         asyncio.create_task(self.start_ping_self())
 
     async def stop(self):
@@ -54,12 +53,10 @@ class AskiAngelBot(Client):
         print("Bot stopped.")
 
     async def start_ping_self(self):
-        # Run the synchronous ping_self in a separate thread/executor
         loop = asyncio.get_event_loop()
         await loop.run_in_executor(None, ping_self)
 
     def register_handlers(self):
-        # Register handlers from imported modules
         admin.register_admin_handlers(self, self.utils)
         learning.register_learning_handlers(self, self.utils)
         premium.register_premium_handlers(self, self.utils)
@@ -67,16 +64,12 @@ class AskiAngelBot(Client):
         print("All handlers registered!")
 
 if __name__ == "__main__":
-    # Start the Flask keep-alive server in a separate thread
-    keep_alive() # <-- यह अब non-blocking है क्योंकि keep_alive.py में बदलाव किए गए हैं
+    keep_alive()
 
-    # Initialize and run the bot
     bot = AskiAngelBot()
 
     try:
-        # Use run_until_complete for synchronous execution of async main
         asyncio.get_event_loop().run_until_complete(bot.start())
-        # This will keep the bot running until it's stopped manually or by an error
         asyncio.get_event_loop().run_forever()
     except KeyboardInterrupt:
         print("Bot stopped by KeyboardInterrupt.")
@@ -85,5 +78,5 @@ if __name__ == "__main__":
     finally:
         if bot.is_connected:
             asyncio.get_event_loop().run_until_complete(bot.stop())
-        db.client.close() # Close MongoDB connection
+        db.client.close()
         print("MongoDB connection closed.")
