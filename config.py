@@ -1,7 +1,7 @@
 import os
 
 # --- Bot Configuration ---
-BOT_TOKEN = os.getenv('7467073514:AAFQ3vCZXTdee9McGkgvgZky70GsDjahcAA')
+BOT_TOKEN = os.getenv('BOT_TOKEN')
 API_ID = int(os.getenv('API_ID', '29970536')) # Default value for development, but should be set in .env
 API_HASH = os.getenv('API_HASH', 'f4bfdcdd4a5c1b7328a7e4f25f024a09') # Default value for development, but should be set in .env
 
